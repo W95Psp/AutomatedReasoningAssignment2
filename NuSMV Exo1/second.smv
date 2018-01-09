@@ -1,0 +1,53 @@
+MODULE main
+ DEFINE
+ 	d_a_s := 15; d_a_c := 11;
+ 	d_c_s := 15; d_b_c := 11;
+ 	d_c_d := 20; d_b_d := 20;
+ 	d_a_b := 17;
+ 	max_a := 110; max_b := 160;
+ 	max_c := 110; max_d := 160;
+ 	max_n := 4; -- "number of state" - 1
+ 	max_t := 235;
+VAR
+	a : 0..max_a;
+	b : 0..max_b;
+	c : 0..max_c;
+	d : 0..max_d;
+	n : 0..max_n;
+	t : 0..max_t;
+ASSIGN
+	init(a) := 50;
+	init(b) := 160;
+	init(c) := 110;
+	init(d) := 50;
+
+	init(n) := 0;
+	init(t) := max_t;
+TRANS
+	(	 (n = 1) & (-- at a
+			  ((move{d_a_b,b}))
+			| ((move{d_a_c,c}))
+			| ((move{d_a_s,s} & next(t) = max_t))
+		)
+	) | ((n = 2) & (-- at b
+			  ((move{d_a_b, a}))
+			| ((move{d_b_c, c}))
+			| ((move{d_b_d, d}))
+		)
+	) | ((n = 3) & (-- at c
+			  ((move{d_a_c, a}))
+			| ((move{d_b_c, b}))
+			| ((move{d_c_d, d}))
+			| ((move{d_c_s, s} & next(t) = max_t))
+		)
+	) | ((n = 4) & (-- at d
+			  ((move{d_b_d, b}))
+			| ((move{d_c_d, c}))
+		)
+	) | ((n = 0) & (-- at s
+			  ((move{d_a_s, a}))
+			| ((move{d_c_s, c}))
+		)
+	)
+LTLSPEC
+	G !(a > 0 & b > 0 & c > 0 & d > 0)

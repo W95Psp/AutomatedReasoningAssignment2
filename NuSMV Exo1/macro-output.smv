@@ -1,0 +1,135 @@
+MODULE main
+ DEFINE
+ 	d_a_s := 15; d_a_c := 11;
+ 	d_c_s := 15; d_b_c := 11;
+ 	d_c_d := 20; d_b_d := 20;
+ 	d_a_b := 17;
+ 	max_a := 110; max_b := 160;
+ 	max_c := 110; max_d := 160;
+ 	max_n := 4; -- "number of state" - 1
+ 	max_t := 235;
+VAR
+	a : 0..max_a;
+	b : 0..max_b;
+	c : 0..max_c;
+	d : 0..max_d;
+	n : 0..max_n;
+	t : 0..max_t;
+ASSIGN
+	init(a) := 50;
+	init(b) := 160;
+	init(c) := 110;
+	init(d) := 50;
+
+	init(n) := 0;
+	init(t) := max_t;
+TRANS
+	(	 (n = 1) & (-- at a
+			  ((
+				(next(a) = a - d_a_b) & 
+				((next(b) = b + (((max_b - (b - d_a_b)) > t) ? t : (max_b - (b - d_a_b))) - d_a_b) &
+					(next(t) = t - (((max_b - (b - d_a_b)) > t) ? t : (max_b - (b - d_a_b))))) & 
+				(next(c) = c - d_a_b) & 
+				(next(d) = d - d_a_b)
+				& (next(n) = 2)))
+			| ((
+				(next(a) = a - d_a_c) & 
+				(next(b) = b - d_a_c) & 
+				((next(c) = c + (((max_c - (c - d_a_c)) > t) ? t : (max_c - (c - d_a_c))) - d_a_c) &
+					(next(t) = t - (((max_c - (c - d_a_c)) > t) ? t : (max_c - (c - d_a_c))))) & 
+				(next(d) = d - d_a_c)
+				& (next(n) = 3)))
+			| ((
+				(next(a) = a - d_a_s) & 
+				(next(b) = b - d_a_s) & 
+				(next(c) = c - d_a_s) & 
+				(next(d) = d - d_a_s)
+				& (next(n) = 0) & next(t) = max_t))
+		)
+	) | ((n = 2) & (-- at b
+			  ((
+				((next(a) = a + (((max_a - (a - d_a_b)) > t) ? t : (max_a - (a - d_a_b))) - d_a_b) &
+					(next(t) = t - (((max_a - (a - d_a_b)) > t) ? t : (max_a - (a - d_a_b))))) & 
+				(next(b) = b - d_a_b) & 
+				(next(c) = c - d_a_b) & 
+				(next(d) = d - d_a_b)
+				& (next(n) = 1)))
+			| ((
+				(next(a) = a - d_b_c) & 
+				(next(b) = b - d_b_c) & 
+				((next(c) = c + (((max_c - (c - d_b_c)) > t) ? t : (max_c - (c - d_b_c))) - d_b_c) &
+					(next(t) = t - (((max_c - (c - d_b_c)) > t) ? t : (max_c - (c - d_b_c))))) & 
+				(next(d) = d - d_b_c)
+				& (next(n) = 3)))
+			| ((
+				(next(a) = a - d_b_d) & 
+				(next(b) = b - d_b_d) & 
+				(next(c) = c - d_b_d) & 
+				((next(d) = d + (((max_d - (d - d_b_d)) > t) ? t : (max_d - (d - d_b_d))) - d_b_d) &
+					(next(t) = t - (((max_d - (d - d_b_d)) > t) ? t : (max_d - (d - d_b_d)))))
+				& (next(n) = 4)))
+		)
+	) | ((n = 3) & (-- at c
+			  ((
+				((next(a) = a + (((max_a - (a - d_a_c)) > t) ? t : (max_a - (a - d_a_c))) - d_a_c) &
+					(next(t) = t - (((max_a - (a - d_a_c)) > t) ? t : (max_a - (a - d_a_c))))) & 
+				(next(b) = b - d_a_c) & 
+				(next(c) = c - d_a_c) & 
+				(next(d) = d - d_a_c)
+				& (next(n) = 1)))
+			| ((
+				(next(a) = a - d_b_c) & 
+				((next(b) = b + (((max_b - (b - d_b_c)) > t) ? t : (max_b - (b - d_b_c))) - d_b_c) &
+					(next(t) = t - (((max_b - (b - d_b_c)) > t) ? t : (max_b - (b - d_b_c))))) & 
+				(next(c) = c - d_b_c) & 
+				(next(d) = d - d_b_c)
+				& (next(n) = 2)))
+			| ((
+				(next(a) = a - d_c_d) & 
+				(next(b) = b - d_c_d) & 
+				(next(c) = c - d_c_d) & 
+				((next(d) = d + (((max_d - (d - d_c_d)) > t) ? t : (max_d - (d - d_c_d))) - d_c_d) &
+					(next(t) = t - (((max_d - (d - d_c_d)) > t) ? t : (max_d - (d - d_c_d)))))
+				& (next(n) = 4)))
+			| ((
+				(next(a) = a - d_c_s) & 
+				(next(b) = b - d_c_s) & 
+				(next(c) = c - d_c_s) & 
+				(next(d) = d - d_c_s)
+				& (next(n) = 0) & next(t) = max_t))
+		)
+	) | ((n = 4) & (-- at d
+			  ((
+				(next(a) = a - d_b_d) & 
+				((next(b) = b + (((max_b - (b - d_b_d)) > t) ? t : (max_b - (b - d_b_d))) - d_b_d) &
+					(next(t) = t - (((max_b - (b - d_b_d)) > t) ? t : (max_b - (b - d_b_d))))) & 
+				(next(c) = c - d_b_d) & 
+				(next(d) = d - d_b_d)
+				& (next(n) = 2)))
+			| ((
+				(next(a) = a - d_c_d) & 
+				(next(b) = b - d_c_d) & 
+				((next(c) = c + (((max_c - (c - d_c_d)) > t) ? t : (max_c - (c - d_c_d))) - d_c_d) &
+					(next(t) = t - (((max_c - (c - d_c_d)) > t) ? t : (max_c - (c - d_c_d))))) & 
+				(next(d) = d - d_c_d)
+				& (next(n) = 3)))
+		)
+	) | ((n = 0) & (-- at s
+			  ((
+				((next(a) = a + (((max_a - (a - d_a_s)) > t) ? t : (max_a - (a - d_a_s))) - d_a_s) &
+					(next(t) = t - (((max_a - (a - d_a_s)) > t) ? t : (max_a - (a - d_a_s))))) & 
+				(next(b) = b - d_a_s) & 
+				(next(c) = c - d_a_s) & 
+				(next(d) = d - d_a_s)
+				& (next(n) = 1)))
+			| ((
+				(next(a) = a - d_c_s) & 
+				(next(b) = b - d_c_s) & 
+				((next(c) = c + (((max_c - (c - d_c_s)) > t) ? t : (max_c - (c - d_c_s))) - d_c_s) &
+					(next(t) = t - (((max_c - (c - d_c_s)) > t) ? t : (max_c - (c - d_c_s))))) & 
+				(next(d) = d - d_c_s)
+				& (next(n) = 3)))
+		)
+	)
+LTLSPEC
+	G !(a > 0 & b > 0 & c > 0 & d > 0)
